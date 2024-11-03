@@ -423,4 +423,4 @@ def ai_trading():
 
 while True:
     ai_trading()
-    time.sleep(3600)  # 1시간마다 실행
+    time.sleep(3600*8)  # 8시간마다 실행
