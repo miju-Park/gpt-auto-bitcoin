@@ -20,14 +20,21 @@ load_dotenv()
 # 과거 데이터로 반성
 def generate_reflection(client, past_trades, current_market_data):
     # 과거 거래 데이터와 현재 시장 데이터를 문자열로 변환
-    past_trades_str = json.dumps(past_trades, default=str)
-    current_market_data_str = json.dumps(current_market_data, default=str)
+    past_trades_str = json.dumps(past_trades[-3:], default=str)  # 최근 3개의 거래만 사용
+    current_market_data_str = json.dumps({
+        "ohlcv_data": {
+            "daily": current_market_data["ohlcv_data"]["daily"][-5:],  # 최근 5일 데이터만 사용
+            "hourly": current_market_data["ohlcv_data"]["hourly"][-12:]  # 최근 12시간 데이터만 사용
+        },
+        "fear_greed_index": current_market_data["fear_greed_index"],
+        "news_headlines": current_market_data["news_headlines"][:3]  # 최근 3개의 뉴스 헤드라인만 사용
+    }, default=str)
 
     response = client.chat.completions.create(
         model="gpt-4-0613",
         messages=[
             {"role": "system", "content": "You are an AI trading assistant tasked with analyzing past trading decisions and current market conditions to provide insights and improvements for future trading strategies."},
-            {"role": "user", "content": f"Based on these past trades: {past_trades_str} and current market conditions: {current_market_data_str}, provide a reflection on past decisions and suggest improvements for future trading. Focus on alignment with Wonyotti's principles and any deviations from them."}
+            {"role": "user", "content": f"Based on these past trades: {past_trades_str} and current market conditions: {current_market_data_str}, provide a brief reflection on past decisions and suggest improvements for future trading. Focus on alignment with Wonyotti's principles and any deviations from them."}
         ],
         max_tokens=500
     )
@@ -106,7 +113,7 @@ def get_news_headlines():
         "engine": "google",
         "q": "btc",
         "tbm": "nws",
-        "num": 5,
+        "num": 3,
         "api_key": api_key
     }
     
@@ -190,8 +197,8 @@ def get_orderbook(ticker="KRW-BTC"):
 # ohlcv 데이터 가져오기(pyupbit 사용)
 def get_ohlcv_data(ticker="KRW-BTC"):
     try:
-        daily_data = pyupbit.get_ohlcv(ticker, interval="day", count=30)
-        hourly_data = pyupbit.get_ohlcv(ticker, interval="minute60", count=24)
+        daily_data = pyupbit.get_ohlcv(ticker, interval="day", count=10)  # 30일에서 10일로 변경
+        hourly_data = pyupbit.get_ohlcv(ticker, interval="minute60", count=12)  # 24시간에서 12시간으로 변경
 
         # 일별 데이터에 기술적 지표 추가
         daily_data = add_selected_indicators(daily_data)
@@ -368,7 +375,7 @@ def ai_trading():
         # 과거 거래 데이터 가져오기
         conn = sqlite3.connect('trading_data.db')
         cursor = conn.cursor()
-        cursor.execute('SELECT * FROM trades ORDER BY id DESC LIMIT 10')
+        cursor.execute('SELECT * FROM trades ORDER BY id DESC LIMIT 5')
         past_trades = cursor.fetchall()
         conn.close()
 
