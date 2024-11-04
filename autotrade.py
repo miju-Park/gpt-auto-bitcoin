@@ -256,7 +256,7 @@ def ai_trading():
     orderbook = get_orderbook()
     ohlcv_data = get_ohlcv_data()
     news_headlines = get_news_headlines()
-    youtube_transcripts = get_youtube_data()
+    # youtube_transcripts = get_youtube_data()
 
     if not all([investment_status, orderbook, ohlcv_data]):
       print("데이터 조회 실패. 다음 실행을 기다립니다.")
