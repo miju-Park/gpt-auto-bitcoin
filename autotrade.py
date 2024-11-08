@@ -154,18 +154,22 @@ def get_news_headlines():
 
 # Fear and Greed Index API 함수
 def get_fear_greed_index():
-    url = "https://api.alternative.me/fng/"
-    response = requests.get(url)
-    if response.status_code == 200:
-        data = response.json()
-        return {
-            'value': int(data['data'][0]['value']),
-            'value_classification': data['data'][0]['value_classification'],
-            'timestamp': int(data['data'][0]['timestamp'])
-        }
-    else:
-        print("Fear and Greed Index API 호출 실패")
-        return None
+    try:
+        url = "https://api.alternative.me/fng/"
+        response = requests.get(url)
+        if response.status_code == 200:
+            data = response.json()
+            return {
+                'value': int(data['data'][0]['value']),
+                'value_classification': data['data'][0]['value_classification'],
+                'timestamp': int(data['data'][0]['timestamp'])
+            }
+        else:
+            print("Fear and Greed Index API 호출 실패")
+            return None
+    except Exception as e:
+        print(f"Fear and Greed Index API 호출 에러: {e}")
+        return None    
 
 # 현재 자산 정보 가져오기
 def get_investment_status(upbit):
