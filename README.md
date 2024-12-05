@@ -24,4 +24,4 @@ streamlit run ./streamlit_app.py  # 웹페이지 동작
 
 ## Demo 페이지 확인
 
-[streamlit 주소](http://3.35.140.64:8501/)
+[streamlit 주소](http://52.78.57.210:8501/)
