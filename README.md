@@ -19,7 +19,7 @@ SERPAPI_API_KEY # 뉴스 검색을 위한 api Key
 pip install -r requirements.txt
 
 python ./autotrade.py # 메인 로직 동작
-python ./streamlit_app.py  # 웹페이지 동작
+streamlit run ./streamlit_app.py  # 웹페이지 동작
 ```
 
 ## Demo 페이지 확인
